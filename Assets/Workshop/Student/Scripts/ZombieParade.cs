@@ -22,7 +22,15 @@ namespace Solution
 
         private void Start()
         {
-            growAction = InputSystem.actions.FindAction("Grow");
+            if (InputSystem.actions != null)
+            {
+                growAction = InputSystem.actions.FindAction("Grow");
+            }
+
+            if (growAction == null)
+            {
+                Debug.LogWarning("ZombieParade: Add a Grow action to InputSystem_Actions and bind it to G.", this);
+            }
             moveDirection = Vector3.up;
             isAlive = true;
             // เริ่ม Coroutine สำหรับการเคลื่อนที่
@@ -32,7 +40,7 @@ namespace Solution
 
         private void Update()
         {
-            if (growAction.triggered)
+            if (growAction != null && growAction.triggered)
             {
                 Grow();
             }
