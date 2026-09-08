@@ -22,15 +22,7 @@ namespace Solution
 
         private void Start()
         {
-            if (InputSystem.actions != null)
-            {
-                growAction = InputSystem.actions.FindAction("Grow");
-            }
-
-            if (growAction == null)
-            {
-                Debug.LogWarning("ZombieParade: Add a Grow action to InputSystem_Actions and bind it to G.", this);
-            }
+            growAction = InputSystem.actions.FindAction("Grow");
             moveDirection = Vector3.up;
             isAlive = true;
             // เริ่ม Coroutine สำหรับการเคลื่อนที่
@@ -40,7 +32,7 @@ namespace Solution
 
         private void Update()
         {
-            if (growAction != null && growAction.triggered)
+            if (growAction.triggered)
             {
                 Grow();
             }
@@ -62,17 +54,19 @@ namespace Solution
         {
             //0. สร้างหัวงู
             Parade.AddFirst(this.gameObject);
+
             while (isAlive)
             {
                 // 1. ดึงส่วนแรกของงูออกมา
                 var firstNode = Parade.First;
-                var firstGameObject = firstNode.Value;
+                var firstGo = firstNode.Value;
+
                 // 2. ดึงส่วนสุดท้ายของงูออกมา
                 var lastNode = Parade.Last;
-                var lastNodeGameObject = lastNode.Value;
+                var lastGo = lastNode.Value;
+
                 // 3. ลบส่วนสุดท้ายออกจาก LinkedList
                 Parade.RemoveLast();
-
 
                 // 5. กำหนดตำแหน่งและทิศทางของส่วนที่ถูกย้ายมาใหม่
                 // ให้ไปอยู่ที่ตำแหน่งของส่วนหัวงู (ซึ่งเพิ่งเคลื่อนที่ไปเมื่อครู่)
@@ -80,36 +74,33 @@ namespace Solution
                 int toY = 0;
 
                 moveDirection = RandomizeDirection();
-                toX = (int)(firstGameObject.transform.position.x + moveDirection.x);
-                toY = (int)(firstGameObject.transform.position.y + moveDirection.y);
+                toX = (int)(firstGo.transform.position.x + moveDirection.x);
+                toY = (int)(firstGo.transform.position.y + moveDirection.y);
 
                 while (IsCollision(toX, toY))
                 {
                     moveDirection = RandomizeDirection();
-                    toX = (int)(firstGameObject.transform.position.x + moveDirection.x);
-                    toY = (int)(firstGameObject.transform.position.y + moveDirection.y);
-
-
+                    toX = (int)(firstGo.transform.position.x + moveDirection.x);
+                    toY = (int)(firstGo.transform.position.y + moveDirection.y);
                 }
-
 
                 //6. เคลื่อนที่
                 positionX = toX;
                 positionY = toY;
-
-                lastNodeGameObject.transform.position = new Vector3(positionX, positionY, 0);
-                if(moveDirection == Vector3.right)
+                lastGo.transform.position = new Vector3(positionX, positionY, 0);
+                if (moveDirection == Vector3.right)
                 {
-                    lastNodeGameObject.GetComponent<SpriteRenderer>().flipX = true;
+                    lastGo.GetComponent<SpriteRenderer>().flipX = true;
                 }
-                else
+                else if (moveDirection == Vector3.left)
                 {
-                    lastNodeGameObject.GetComponent<SpriteRenderer>().flipX=false;
+                    lastGo.GetComponent<SpriteRenderer>().flipX = false;
                 }
 
                 // 7. เพิ่มส่วนนั้นกลับเข้าไปเป็นส่วนที่สองของ LinkedList
                 // (ซึ่งก็คือส่วนแรกของลำตัว)
                 Parade.AddFirst(lastNode);
+
                 // รอตามเวลาที่กำหนดก่อนการเคลื่อนที่ครั้งต่อไป
                 yield return new WaitForSeconds(moveInterval);
             }
@@ -117,19 +108,19 @@ namespace Solution
         private bool IsCollision(int x, int y)
         {
             // 4. ตรวจสอบสิ่งกีดขวาง
-            if(HasPlacement (x, y))
+            if (HasPlacement(x, y))
             {
                 return true;
             }
             return false;
         }
-        void Move(Vector2 direction,GameObject targetMove)
+        void Move(Vector2 direction, GameObject targetMove)
         {
             int toX = (int)direction.x;
             int toY = (int)direction.y;
             Debug.Log("Move to: " + toX + "," + toY);
         }
-        
+
 
         // ฟังก์ชันสำหรับเพิ่มส่วนของงู (Grow)
         private void Grow()
