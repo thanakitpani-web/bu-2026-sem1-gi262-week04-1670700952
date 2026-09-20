@@ -98,7 +98,7 @@ namespace Solution
                 int y = Random.Range(0, Y);
                 if (mapdata[x, y] == null)
                 {
-                    PlaceItem(x, y,demonWallsPrefab,wallParent,demonWall);
+                    PlaceItem(x, y, demonWallsPrefab, wallParent, demonWall);
                     count++;
                 }
             }
@@ -112,7 +112,7 @@ namespace Solution
                 int y = Random.Range(0, Y);
                 if (mapdata[x, y] == null)
                 {
-                    PlaceItem(x, y,itemsPrefab, itemParent, potion);
+                    PlaceItem(x, y, itemsPrefab, itemParent, potion);
                     count++;
                 }
             }
@@ -125,7 +125,7 @@ namespace Solution
                 int y = Random.Range(0, Y);
                 if (mapdata[x, y] == null)
                 {
-                    PlaceItem(x, y,collectItemsPrefab, itemParent,collectItem);
+                    PlaceItem(x, y, collectItemsPrefab, itemParent, collectItem);
                     count++;
                 }
             }
@@ -135,14 +135,15 @@ namespace Solution
 
         public Identity GetMapData(float x, float y)
         {
-            if (x >= X || x < 0 || y >= Y || y < 0) {
+            if (x >= X || x < 0 || y >= Y || y < 0)
+            {
                 return Wall;
             }
 
             return mapdata[(int)x, (int)y];
         }
 
-        public void PlaceItem(int x, int y,GameObject[] _itemsPrefab,Transform parrent,string _name)
+        public void PlaceItem(int x, int y, GameObject[] _itemsPrefab, Transform parrent, string _name)
         {
             int r = Random.Range(0, _itemsPrefab.Length);
             GameObject obj = Instantiate(_itemsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
@@ -151,12 +152,13 @@ namespace Solution
             mapdata[x, y].positionX = x;
             mapdata[x, y].positionY = y;
             mapdata[x, y].mapGenerator = this;
-            if (_name != collectItem) {
+            if (_name != collectItem)
+            {
                 mapdata[x, y].Name = _name;
             }
             obj.name = $"Item_{mapdata[x, y].Name} {x}, {y}";
         }
 
-       
+
     }
 }
